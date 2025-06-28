@@ -1,15 +1,20 @@
 // Instagram Clone — Full Layout with Routing and Components
 // Stack: React + Tailwind CSS + Firebase + React Router DOM
 
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { auth, db } from './config/firebase';
+import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { auth, db } from "./config/firebase";
 import {
   onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
-  signOut
-} from 'firebase/auth';
+  signOut,
+} from "firebase/auth";
 import {
   collection,
   onSnapshot,
@@ -18,27 +23,28 @@ import {
   updateDoc,
   doc,
   arrayUnion,
-  arrayRemove
-} from 'firebase/firestore';
-import Sidebar from './components/Sidebar';
-import Home from './pages/Home';
-import Create from './pages/Create';
-import Profile from './pages/Profile';
-import Notifications from './pages/Notifications';
+  arrayRemove,
+} from "firebase/firestore";
+import Sidebar from "./components/Sidebar";
+import Home from "./pages/Home";
+import Create from "./pages/Create";
+import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
+import { Timestamp } from "firebase/firestore"; // Make sure this is imported
 
 function App() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]); // Each post will include likes and comments
-  const [caption, setCaption] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [caption, setCaption] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
 
-    const unsub = onSnapshot(collection(db, 'posts'), (snapshot) => {
-      setPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    const unsub = onSnapshot(collection(db, "posts"), (snapshot) => {
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
     return () => unsub();
@@ -53,46 +59,52 @@ function App() {
 
   const handlePost = async () => {
     if (caption && imageUrl) {
-      await addDoc(collection(db, 'posts'), {
+      await addDoc(collection(db, "posts"), {
         caption,
         imageUrl,
         userName: user.displayName,
         createdAt: serverTimestamp(),
         userPic: user.photoURL,
         likes: [],
-        comments: []
+        comments: [],
       });
-      setCaption('');
-      setImageUrl('');
+      setCaption("");
+      setImageUrl("");
     }
   };
 
   const handleLike = async (postId, hasLiked) => {
-    const postRef = doc(db, 'posts', postId);
+    const postRef = doc(db, "posts", postId);
     if (hasLiked) {
       await updateDoc(postRef, {
-        likes: arrayRemove(user.uid)
+        likes: arrayRemove(user.uid),
       });
     } else {
       await updateDoc(postRef, {
-        likes: arrayUnion(user.uid)
+        likes: arrayUnion(user.uid),
       });
     }
   };
 
-  const handleAddComment = async (postId, text) => {
-    if (!text.trim()) return;
-    const postRef = doc(db, 'posts', postId);
-    const comment = {
-      userId: user.uid,
-      userName: user.displayName,
-      text,
-      createdAt: serverTimestamp(),
-    };
-    await updateDoc(postRef, {
-      comments: arrayUnion(comment)
-    });
+
+const handleAddComment = async (postId, text) => {
+  if (!text.trim()) return;
+
+  const postRef = doc(db, "posts", postId);
+
+  const comment = {
+    userId: user.uid,
+    userName: user.displayName,
+    text,
+    createdAt: Timestamp.now(), // ✅ Safe alternative to serverTimestamp
   };
+
+  console.log(text, postId);
+
+  await updateDoc(postRef, {
+    comments: arrayUnion(comment),
+  });
+};
 
   if (!user) {
     return (
@@ -106,37 +118,55 @@ function App() {
       </div>
     );
   }
+console.log(window.location.pathname);
 
   return (
     <Router>
-      <div className="bg-gray-100 min-h-screen font-sans flex">
-        <Sidebar user={user} onLogout={handleSignOut} />
-        <Routes>
-          <Route
-            path="/"
-            element={<Home user={user} posts={posts} onLike={handleLike} onComment={handleAddComment} />}
-          />
-          <Route
-            path="/create"
-            element={<Create
-              user={user}
-              caption={caption}
-              imageUrl={imageUrl}
-              setCaption={setCaption}
-              setImageUrl={setImageUrl}
-              handlePost={handlePost}
-            />}
-          />
-          <Route
-            path="/profile"
-            element={<Profile user={user} />}
-          />
-          <Route
-            path="/notifications"
-            element={<Notifications user={user} />}
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+      <div className="bg-gray-100 min-h-screen font-sans flex w-full">
+        <div className="text w-1/4">
+          <Sidebar user={user} onLogout={handleSignOut} />
+        </div>
+        <div className="text flex ">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  user={user}
+                  posts={posts}
+                  onLike={handleLike}
+                  onComment={handleAddComment}
+                />
+              }
+            />
+            <Route
+              path="/create"
+              element={
+                <Create
+                  user={user}
+                  caption={caption}
+                  imageUrl={imageUrl}
+                  setCaption={setCaption}
+                  setImageUrl={setImageUrl}
+                  handlePost={handlePost}
+                />
+              }
+            />
+            <Route path="/profile" element={<Profile user={user} />} />
+            <Route
+              path="/notifications"
+              element={<Notifications user={user} />}
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        {window.location.pathname === "/" && (
+          <div className="">
+            <h2 className="text-lg font-semibold">Welcome, {user.displayName}!</h2>
+            <p className="text-sm text-gray-600">Explore the latest posts.</p>
+            <div className="text"></div>
+          </div>
+        )}
+        </div>
       </div>
     </Router>
   );

@@ -1,6 +1,7 @@
 // Sidebar.jsx
 import { FiHome, FiPlusSquare, FiLogOut, FiUser, FiBell } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
+import CreatePostModal from './CreatePostModal';
 
 function Sidebar({ user, onLogout }) {
   const location = useLocation();
@@ -14,9 +15,10 @@ function Sidebar({ user, onLogout }) {
           <Link to="/" className={`flex items-center space-x-2 ${active('/')} hover:text-pink-600`}>
             <FiHome className="text-2xl" /> <span className="hidden md:inline">Home</span>
           </Link>
-          <Link to="/create" className={`flex items-center space-x-2 ${active('/create')} hover:text-pink-600`}>
+          {/* <Link to="/create" className={`flex items-center space-x-2 ${active('/create')} hover:text-pink-600`}>
             <FiPlusSquare className="text-2xl" /> <span className="hidden md:inline">Create</span>
-          </Link>
+          </Link> */}
+          <CreatePostModal/>
           <Link to="/profile" className={`flex items-center space-x-2 ${active('/profile')} hover:text-pink-600`}>
             <FiUser className="text-2xl" /> <span className="hidden md:inline">Profile</span>
           </Link>
