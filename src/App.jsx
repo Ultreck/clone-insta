@@ -14,7 +14,11 @@ import {
   collection,
   onSnapshot,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  updateDoc,
+  doc,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import Sidebar from './components/Sidebar';
 import Home from './pages/Home';
@@ -24,7 +28,7 @@ import Notifications from './pages/Notifications';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]); // Each post will include likes and comments
   const [caption, setCaption] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
@@ -54,11 +58,40 @@ function App() {
         imageUrl,
         userName: user.displayName,
         createdAt: serverTimestamp(),
-        userPic: user.photoURL
+        userPic: user.photoURL,
+        likes: [],
+        comments: []
       });
       setCaption('');
       setImageUrl('');
     }
+  };
+
+  const handleLike = async (postId, hasLiked) => {
+    const postRef = doc(db, 'posts', postId);
+    if (hasLiked) {
+      await updateDoc(postRef, {
+        likes: arrayRemove(user.uid)
+      });
+    } else {
+      await updateDoc(postRef, {
+        likes: arrayUnion(user.uid)
+      });
+    }
+  };
+
+  const handleAddComment = async (postId, text) => {
+    if (!text.trim()) return;
+    const postRef = doc(db, 'posts', postId);
+    const comment = {
+      userId: user.uid,
+      userName: user.displayName,
+      text,
+      createdAt: serverTimestamp(),
+    };
+    await updateDoc(postRef, {
+      comments: arrayUnion(comment)
+    });
   };
 
   if (!user) {
@@ -81,7 +114,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<Home user={user} posts={posts} />}
+            element={<Home user={user} posts={posts} onLike={handleLike} onComment={handleAddComment} />}
           />
           <Route
             path="/create"
