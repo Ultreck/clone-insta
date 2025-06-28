@@ -10,7 +10,7 @@ function Sidebar({ user, onLogout }) {
     <aside className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-white shadow flex flex-col justify-between p-4">
       <div>
         <h1 className="text-pink-600 text-2xl font-bold mb-6 hidden md:block">InstaClone</h1>
-        <nav className="space-y-10">
+        <nav className="space-y-10 mt-16">
           <Link to="/" className={`flex items-center space-x-2 ${active('/')} hover:text-pink-600`}>
             <FiHome className="text-2xl" /> <span className="hidden md:inline">Home</span>
           </Link>
