@@ -1,10 +1,26 @@
-// Instagram Clone Starter
-// Stack: React + Tailwind CSS + Firebase (for Auth & Posts)
+// Instagram Clone — Full Layout with Routing and Components
+// Stack: React + Tailwind CSS + Firebase + React Router DOM
 
 import { useState, useEffect } from 'react';
-import { auth, db } from './firebase'; // Firebase config setup separately
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { collection, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { auth, db } from './config/firebase';
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut
+} from 'firebase/auth';
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  serverTimestamp
+} from 'firebase/firestore';
+import Sidebar from './components/Sidebar';
+import Home from './pages/Home';
+import Create from './pages/Create';
+import Profile from './pages/Profile';
+import Notifications from './pages/Notifications';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -24,10 +40,12 @@ function App() {
     return () => unsub();
   }, []);
 
-  const signIn = () => {
+  const handleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider);
   };
+
+  const handleSignOut = () => signOut(auth);
 
   const handlePost = async () => {
     if (caption && imageUrl) {
@@ -35,62 +53,59 @@ function App() {
         caption,
         imageUrl,
         userName: user.displayName,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        userPic: user.photoURL
       });
       setCaption('');
       setImageUrl('');
     }
   };
 
-  return (
-    <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-4">Instagram Clone</h1>
-
-      {!user ? (
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
         <button
-          onClick={signIn}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={handleSignIn}
+          className="bg-pink-600 text-white px-6 py-3 rounded text-lg"
         >
           Sign in with Google
         </button>
-      ) : (
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded shadow">
-            <h2 className="font-semibold mb-2">Create a Post</h2>
-            <input
-              type="text"
-              placeholder="Image URL"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="border w-full p-2 mb-2"
-            />
-            <input
-              type="text"
-              placeholder="Caption"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              className="border w-full p-2 mb-2"
-            />
-            <button
-              onClick={handlePost}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              Post
-            </button>
-          </div>
+      </div>
+    );
+  }
 
-          <div className="space-y-4">
-            {posts.map(post => (
-              <div key={post.id} className="bg-white p-4 rounded shadow">
-                <img src={post.imageUrl} alt="Post" className="w-full h-60 object-cover rounded" />
-                <p className="mt-2 font-semibold">{post.userName}</p>
-                <p>{post.caption}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+  return (
+    <Router>
+      <div className="bg-gray-100 min-h-screen font-sans flex">
+        <Sidebar user={user} onLogout={handleSignOut} />
+        <Routes>
+          <Route
+            path="/"
+            element={<Home user={user} posts={posts} />}
+          />
+          <Route
+            path="/create"
+            element={<Create
+              user={user}
+              caption={caption}
+              imageUrl={imageUrl}
+              setCaption={setCaption}
+              setImageUrl={setImageUrl}
+              handlePost={handlePost}
+            />}
+          />
+          <Route
+            path="/profile"
+            element={<Profile user={user} />}
+          />
+          <Route
+            path="/notifications"
+            element={<Notifications user={user} />}
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
