@@ -32,7 +32,7 @@ import Create from "./pages/Create";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import { Timestamp } from "firebase/firestore"; // Make sure this is imported
-import SuggestedUsersCard from "./components/SuggestedUsersCard";
+// import SuggestedUsersCard from "./components/SuggestedUsersCard";
 // import { doc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 function App() {
   const [user, setUser] = useState(null);
@@ -167,7 +167,7 @@ const handleBookmark = async (postId, isBookmarked) => {
         <div className="text w-1/4">
           <Sidebar user={user} onLogout={handleSignOut} />
         </div>
-        <div className="text flex px-5">
+        <div className="text w-3/5">
           <Routes>
             <Route
               path="/"
@@ -210,7 +210,7 @@ const handleBookmark = async (postId, isBookmarked) => {
               </h2>
               <p className="text-sm text-gray-600">Explore the latest posts.</p>
               <div className="text"></div> */}
-              <SuggestedUsersCard user={user}/>
+              {/* <SuggestedUsersCard user={user}/> */}
             </div>
           )}
         </div>

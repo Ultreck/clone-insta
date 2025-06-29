@@ -3,13 +3,28 @@ import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { ScrollArea } from "../components/ui/scroll-area";
-import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaRegComment,
+  FaBookmark,
+  FaRegBookmark,
+} from "react-icons/fa";
 import { useState } from "react";
 import { Portal } from "@radix-ui/react-portal";
 import { formatDistanceToNow } from "date-fns";
 import { BsSend } from "react-icons/bs";
 
-export default function PostModal({ post, user, onLike, onComment, trigger }) {
+export default function PostModal({
+  post,
+  user,
+  onLike,
+  onComment,
+  trigger,
+  onShare,
+  onBookmark,
+  bookmarks,
+}) {
   const [comment, setComment] = useState("");
   const hasLiked = post?.likes?.includes(user.uid);
 
@@ -66,16 +81,42 @@ export default function PostModal({ post, user, onLike, onComment, trigger }) {
                 ))}
               </ScrollArea>
               <div className="border-t border-gray-800 px-4 py-3 space-y-3">
-                <div className="flex gap-4 text-xl">
-                  <button onClick={() => onLike(post?.id, hasLiked)}>
-                    {hasLiked ? (
-                      <FaHeart className="text-red-500" />
+                {/* Action icons */}
+                <div className="flex justify-between items-center px-4 py-2 text-xl">
+                  <div className="flex w-full space-x-4">
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => onLike(post.id, hasLiked)}
+                    >
+                      {hasLiked ? (
+                        <FaHeart className="text-red-500" />
+                      ) : (
+                        <FaRegHeart />
+                      )}
+                    </button>
+                    <button className="">
+                      <FaRegComment />
+                    </button>
+
+                    <button
+                      onClick={() => onShare(post.id)}
+                      className="cursor-pointer"
+                    >
+                      <BsSend />
+                    </button>
+                  </div>
+                  <button
+                    className="cursor-pointer"
+                    onClick={() =>
+                      onBookmark(post.id, bookmarks?.includes(post.id))
+                    }
+                  >
+                    {bookmarks?.includes(post.id) ? (
+                      <FaBookmark />
                     ) : (
-                      <FaRegHeart />
+                      <FaRegBookmark />
                     )}
                   </button>
-                  <FaRegComment />
-                  <BsSend />
                 </div>
 
                 <p className="text-sm font-semibold">
