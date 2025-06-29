@@ -10,7 +10,7 @@ export default function SuggestedUsersCard({ user }) {
     console.log(user);
     
   return (
-    <div className="bg-white hidden lg:block h-[70vh] p-4 rounded-lg h- shadow-sm w-2/3 text-sm">
+    <div className="bg-white hidden lg:block mt-5 h-[70vh] p-4 rounded-lg w-2/3 text-sm">
       {/* Top Section */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

@@ -163,7 +163,7 @@ const handleBookmark = async (postId, isBookmarked) => {
 
   return (
     <Router>
-      <div className="bg-gray-100 min-h-screen font-sans flex w-full">
+      <div className="bg-gray-50 min-h-screen font-sans flex w-full">
         <div className="text w-1/4">
           <Sidebar user={user} onLogout={handleSignOut} />
         </div>

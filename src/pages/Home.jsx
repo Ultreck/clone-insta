@@ -12,6 +12,7 @@ import { BsSend } from "react-icons/bs";
 import { formatDistanceToNow } from "date-fns";
 import SuggestedUsersCard from "../components/SuggestedUsersCard";
 import InstagramStory from "../components/InstagramStory";
+import InstagramSuggestionsHeader from "../components/InstagramSuggestionsHeader";
 
 function Home({
   user,
@@ -30,8 +31,9 @@ function Home({
 
   return (
     <div className="flex ">
-      <div className="w-full p-10 ">
+      <div className="w-full px-10 py-2">
         <InstagramStory/>
+        <InstagramSuggestionsHeader/>
         {posts.map((post) => {
           const hasLiked = post.likes?.includes(user.uid);
 
