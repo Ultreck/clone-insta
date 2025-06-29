@@ -18,7 +18,7 @@ function Sidebar({ user, onLogout }) {
           {/* <Link to="/create" className={`flex items-center space-x-2 ${active('/create')} hover:text-pink-600`}>
             <FiPlusSquare className="text-2xl" /> <span className="hidden md:inline">Create</span>
           </Link> */}
-          <CreatePostModal/>
+          <CreatePostModal user={user}/>
           <Link to="/profile" className={`flex items-center space-x-2 ${active('/profile')} hover:text-pink-600`}>
             <FiUser className="text-2xl" /> <span className="hidden md:inline">Profile</span>
           </Link>

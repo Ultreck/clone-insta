@@ -183,7 +183,7 @@ const handleBookmark = async (postId, isBookmarked) => {
                 />
               }
             />
-            <Route
+            {/* <Route
               path="/create"
               element={
                 <Create
@@ -195,7 +195,7 @@ const handleBookmark = async (postId, isBookmarked) => {
                   handlePost={handlePost}
                 />
               }
-            />
+            /> */}
             <Route path="/profile" element={<Profile user={user} />} />
             <Route
               path="/notifications"
@@ -203,16 +203,6 @@ const handleBookmark = async (postId, isBookmarked) => {
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-          {window.location.pathname === "/" && (
-            <div className="mt-10 w-lg">
-              {/* <h2 className="text-lg font-semibold">
-                Welcome, {user.displayName}!
-              </h2>
-              <p className="text-sm text-gray-600">Explore the latest posts.</p>
-              <div className="text"></div> */}
-              {/* <SuggestedUsersCard user={user}/> */}
-            </div>
-          )}
         </div>
       </div>
     </Router>
