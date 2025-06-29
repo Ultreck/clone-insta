@@ -1,39 +1,36 @@
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog";
-import { Button } from "../components/ui/button";
 import { FiPlusSquare } from "react-icons/fi";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { FiUpload, FiX, FiImage } from "react-icons/fi";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { FaArrowLeft, FaRegComment } from "react-icons/fa";
-import { BsSend } from "react-icons/bs";
-import { formatDistanceToNow } from "date-fns";
-const CreatePostModal = ({ user, onPostSubmit, post }) => {
-  const location = useLocation();
+import { FiX } from "react-icons/fi";
+import { FaArrowLeft } from "react-icons/fa";
+import { FaRegFaceLaughBeam } from "react-icons/fa6";
+import EmojiPicker from "emoji-picker-react";
+
+const MAX_LENGTH = 2200;
+
+const CreatePostModal = ({ user, onPostSubmit, setLocation, location, handlePost }) => {
+  const cLocation = useLocation();
   const active = (path) =>
-    location.pathname === path ? "text-pink-600" : "text-gray-800";
+    cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState([]);
   const [isNext, setIsNext] = useState(false);
+  const textareaRef = useRef(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-    const textareaRef = useRef(null);
 
-    useEffect(() => {
-        if(textareaRef.current){
-            textareaRef.current.focus();
-        }
-    }, [isNext]);
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isNext]);
+console.log(isUploading);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -79,7 +76,20 @@ const CreatePostModal = ({ user, onPostSubmit, post }) => {
     }
   };
 
-  console.log(user);
+  const addEmoji = (emojiData) => {
+    const cursorPosition = textareaRef.current.selectionStart;
+    const newCaption =
+      caption.substring(0, cursorPosition) +
+      emojiData.emoji +
+      caption.substring(cursorPosition);
+    setCaption(newCaption);
+  };
+
+  const handleChange = (e) => {
+    if (e.target.value.length <= MAX_LENGTH) {
+      setCaption(e.target.value);
+    }
+  };
 
   return (
     <Dialog onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -95,7 +105,7 @@ const CreatePostModal = ({ user, onPostSubmit, post }) => {
           </div>
         </DialogTrigger>
         <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
+          onOpenAutoFocus={(e) => e.preventDefault()}
           className={`p-0 border-0 sm:max-w-lg ${
             isNext && !!files?.length && "md:max-w-2xl lg:max-w-3xl"
           } min-h-[80vh] bg-white`}
@@ -173,18 +183,20 @@ const CreatePostModal = ({ user, onPostSubmit, post }) => {
                   </button>
                 </div>
               )}
-              <h2 className="text-center absolute top-0 border-b w-full flex justify-between bg-white px-10 items-center h-12">
-                <FaArrowLeft
-                  onClick={() => setIsNext(false)}
-                  className="cursor-pointer"
-                />
-                <button
-                  onClick={() => setIsNext(true)}
-                  className="text-blue-600 font-semibold cursor-pointer pr-3"
-                >
-                  Next
-                </button>
-              </h2>
+              {!!files.length && (
+                <h2 className="text-center absolute top-0 border-b w-full flex justify-between bg-white px-10 items-center h-12">
+                  <FaArrowLeft
+                    onClick={() => setIsNext(false)}
+                    className="cursor-pointer"
+                  />
+                  <button
+                    onClick={() => setIsNext(true)}
+                    className="text-blue-600 font-semibold cursor-pointer pr-3"
+                  >
+                   {isNext? "Share" :  "Next"}
+                  </button>
+                </h2>
+              )}
 
               {isNext && !!files?.length && (
                 <div className="md:w-2/5 flex flex-col border-l border-gray-300">
@@ -206,64 +218,43 @@ const CreatePostModal = ({ user, onPostSubmit, post }) => {
                   {/* Caption input */}
                   <div className="mt-3">
                     <textarea
-                    ref={textareaRef}
+                      ref={textareaRef}
                       id="caption"
                       rows={8}
                       value={caption}
-                      onChange={(e) => setCaption(e.target.value)}
+                      onChange={handleChange}
                       placeholder=""
+                      maxLength={MAX_LENGTH}
                       className="w-full  resize-none focus-visible:ring-0 outline-0 border-0 px-3 py-2 border-gray-300"
-                                   />
+                    />
                   </div>
-                  <div className="text"></div>
+                  <div className="text flex border-b py-3 justify-between px-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className=" text-gray-500 hover:text-gray-700"
+                    >
+                      <FaRegFaceLaughBeam />
+                    </button>
 
-                  <ScrollArea className="flex-1 px-4 py-8 space-y-4">
-                    {post?.comments?.map((c, idx) => (
-                      <div key={idx} className="text-sm my-3">
-                        <span className="font-semibold">{c?.userName}</span>{" "}
-                        <span>{c?.text}</span>
-                        <p className="text-xs text-gray-400">
-                          {c?.createdAt &&
-                            formatDistanceToNow(c.createdAt.toDate(), {
-                              addSuffix: true,
-                            })}{" "}
-                          • {post.likes.length} like
-                          {post.likes.length !== 1 && "s"} • Reply
-                        </p>
+                    {showEmojiPicker && (
+                      <div className="absolute bottom-12 right-0 z-10">
+                        <EmojiPicker
+                          onEmojiClick={addEmoji}
+                          width={300}
+                          height={400}
+                        />
                       </div>
-                    ))}
-                  </ScrollArea>
-                  <div className="border-t border-gray-800 px-4 py-3 space-y-3">
-                    <div className="flex justify-between items-center px-4 py-2 text-xl">
-                      <div className="flex w-full space-x-4">
-                        <button
-                          className="cursor-pointer"
-                          onClick={() => onLike(post.id, hasLiked)}
-                        ></button>
-                        <button className="">
-                          <FaRegComment />
-                        </button>
-
-                        <button
-                          onClick={() => onShare(post.id)}
-                          className="cursor-pointer"
-                        >
-                          <BsSend />
-                        </button>
-                      </div>
-                    </div>
-
-                    <p className="text-sm font-semibold">
-                      {post?.likes?.length || 0} likes
-                    </p>
-
-                    <div className="text w-full">
-                      <form
-                        onSubmit={handleSubmit}
-                        className="flex items-center gap-2 justify-between w-full"
-                      ></form>
-                    </div>
+                    )}
+                    <div className="text-gray-300">{caption?.length}/2,200</div>
                   </div>
+                  <input
+                    type="text"
+                    placeholder="Caption"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="border w-full p-2 mb-4 rounded"
+                  />
                 </div>
               )}
             </div>

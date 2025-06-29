@@ -38,8 +38,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]); // Each post will include likes and comments
   const [caption, setCaption] = useState("");
+  const [location, setLocation] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
+console.log(location);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -68,6 +70,7 @@ function App() {
         userName: user.displayName,
         createdAt: serverTimestamp(),
         userPic: user.photoURL,
+        location: location,
         likes: [],
         comments: [],
       });
@@ -165,7 +168,7 @@ const handleBookmark = async (postId, isBookmarked) => {
     <Router>
       <div className="bg-gray-50 min-h-screen font-sans flex w-full">
         <div className="text w-1/4">
-          <Sidebar user={user} onLogout={handleSignOut} />
+          <Sidebar  handlePost={handlePost} location={location} setLocation={setLocation} user={user} onLogout={handleSignOut} />
         </div>
         <div className="text w-3/5">
           <Routes>
