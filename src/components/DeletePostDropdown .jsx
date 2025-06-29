@@ -23,6 +23,15 @@ const DeletePostDropdown = ({ userId, postUserId, onDeletePost, postId, imageUrl
             const confirmed = window.confirm("Are you sure you want to delete this post?");
             if (confirmed) onDeletePost(postId, imageUrl);
           }}
+          className="text-blue-600 cursor-pointer"
+        >
+          Edit Post
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            const confirmed = window.confirm("Are you sure you want to delete this post?");
+            if (confirmed) onDeletePost(postId, imageUrl);
+          }}
           className="text-red-600 cursor-pointer"
         >
           Delete Post

@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
-import { FiPlusSquare } from "react-icons/fi";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -11,7 +10,6 @@ import LocationInput from "./LocationInputField";
 import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
-import { useDebounce } from "../lib/helper";
 import ThreeColorSpinner from "./ThreeColorSpinner";
 
 const MAX_LENGTH = 2200;
@@ -24,7 +22,7 @@ const CreatePostModal = ({
   caption,
   setImageUrl,
   isSubmitting,
-  setIsSubmitting,
+  triger
 }) => {
   const cLocation = useLocation();
   const active = (path) =>
@@ -34,15 +32,23 @@ const CreatePostModal = ({
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  //   const [texxts, setTexxts] = useState('');
-  // const debouncedSearch = useDebounce(texxts, 500);
-  //   const [isUploading, setIsUploading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [textareaValue, setTextareaValue] = useState("");
 
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [isNext]);
+
+  useEffect(() => {
+    if (!isSubmitting) {
+      setOpen(false);
+      setLocation("");
+      setTextareaValue("");
+      setFiles([]);
+    }
+  }, [isSubmitting]);   
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -77,7 +83,6 @@ const CreatePostModal = ({
     setCaption(newCaption);
   };
 
-  const [textareaValue, setTextareaValue] = useState("");
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -88,18 +93,22 @@ const CreatePostModal = ({
   }, [textareaValue, setCaption]);
 
   console.log(isSubmitting);
-  
+
   return (
-    <Dialog onOpenAutoFocus={(e) => e.preventDefault()}>
+    <Dialog
+      open={open}
+      onOpenChange={setOpen}
+      onOpenAutoFocus={(e) => e.preventDefault()}
+    >
       <form>
         <DialogTrigger asChild>
           <div
+            onClick={() => setOpen(true)}
             className={`flex items-center cursor-pointer space-x-2 ${active(
               "/create"
             )} hover:text-pink-600`}
           >
-            <FiPlusSquare className="text-2xl" />{" "}
-            <span className="hidden md:inline">Create</span>
+           {triger}
           </div>
         </DialogTrigger>
         <DialogContent
