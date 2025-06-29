@@ -13,6 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import SuggestedUsersCard from "../components/SuggestedUsersCard";
 import InstagramStory from "../components/InstagramStory";
 import InstagramSuggestionsHeader from "../components/InstagramSuggestionsHeader";
+import DeletePostDropdown from "../components/DeletePostDropdown ";
 
 function Home({
   user,
@@ -22,6 +23,7 @@ function Home({
   onShare,
   onBookmark,
   bookmarks,
+  onDeletePost,
 }) {
   const [commentText, setCommentText] = useState({});
 
@@ -32,11 +34,11 @@ function Home({
   return (
     <div className="flex ">
       <div className="w-full px-10 py-2">
-        <InstagramStory/>
-        <InstagramSuggestionsHeader/>
+        <InstagramStory />
+        <InstagramSuggestionsHeader />
         {posts.map((post) => {
           const hasLiked = post.likes?.includes(user.uid);
-          
+
           return (
             <div
               key={post.id}
@@ -58,6 +60,11 @@ function Home({
                       })}
                   </div>
                 </div>
+                {/* {user?.uid === post.userId && ( */}
+                  <div className="text">
+                    <DeletePostDropdown imageUrl={post?.imageUrl} postId={post?.id} onDeletePost={onDeletePost} />
+                  </div>
+                {/* )} */}
               </div>
 
               {/* Image */}

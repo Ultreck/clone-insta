@@ -11,18 +11,28 @@ import LocationInput from "./LocationInputField";
 import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
+import { useDebounce } from "../lib/helper";
 
 const MAX_LENGTH = 2200;
 
-const CreatePostModal = ({ user, setLocation, handlePost, setCaption, caption,  setImageUrl }) => {
+const CreatePostModal = ({
+  user,
+  setLocation,
+  handlePost,
+  setCaption,
+  caption,
+  setImageUrl,
+}) => {
   const cLocation = useLocation();
   const active = (path) =>
     cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
-//   const [caption, setCaption] = useState("");
+  //   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState([]);
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  //   const [texxts, setTexxts] = useState('');
+  // const debouncedSearch = useDebounce(texxts, 500);
   //   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
@@ -31,19 +41,17 @@ const CreatePostModal = ({ user, setLocation, handlePost, setCaption, caption,  
     }
   }, [isNext]);
 
- const onDrop = useCallback((acceptedFiles) => {
-  const file = acceptedFiles[0];
+  const onDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
 
-  // Add preview only for display
-  const previewFile = Object.assign(file, {
-    preview: URL.createObjectURL(file),
-  });
+    // Add preview only for display
+    const previewFile = Object.assign(file, {
+      preview: URL.createObjectURL(file),
+    });
 
-  setFiles([previewFile]);
-  setImageUrl(file);
-}, []);
-
-console.log(files);
+    setFiles([previewFile]);
+    setImageUrl(file);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -57,24 +65,6 @@ console.log(files);
     setFiles([]);
   };
 
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //     // setIsUploading(true);
-
-  //     try {
-  //       handlePost({
-  //         caption,
-  //         imageUrl: files[0]?.preview || null,
-  //       });
-
-  //       // Reset form
-  //       setCaption("");
-  //       setFiles([]);
-  //     } finally {
-  //       setIsUploading(false);
-  //     }
-  //   };
-
   const addEmoji = (emojiData) => {
     const cursorPosition = textareaRef.current.selectionStart;
     const newCaption =
@@ -84,11 +74,16 @@ console.log(files);
     setCaption(newCaption);
   };
 
-  const handleChange = (e) => {
-    if (e.target.value.length <= MAX_LENGTH) {
-      setCaption(e.target.value);
-    }
-  };
+  const [textareaValue, setTextareaValue] = useState("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setCaption(textareaValue);
+    }, 0); 
+
+    return () => clearTimeout(timeout);
+  }, [textareaValue, setCaption]);
+
 
   return (
     <Dialog onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -233,10 +228,15 @@ console.log(files);
                         ref={textareaRef}
                         id="caption"
                         rows={8}
-                        value={caption}
-                        onChange={handleChange}
+                        value={textareaValue}
+                        onChange={(e) => {
+                          if (e.target.value.length <= MAX_LENGTH) {
+                            setTextareaValue(e.target.value);
+                          }
+                        }}
+                        // onKeyUp={handleMouseUp}
                         placeholder=""
-                        maxLength={MAX_LENGTH}
+                        // maxLength={MAX_LENGTH}
                         className="w-full  resize-none focus-visible:ring-0 outline-0 border-0 px-3 py-2 border-gray-300"
                       />
                     </div>
