@@ -6,10 +6,20 @@ import {
   FaHeart,
   FaRegComment,
   FaRegBookmark,
+  FaBookmark,
 } from "react-icons/fa";
 import { BsSend } from "react-icons/bs";
+import { formatDistanceToNow } from "date-fns";
 
-function Home({ user, posts, onLike, onComment }) {
+function Home({
+  user,
+  posts,
+  onLike,
+  onComment,
+  onShare,
+  onBookmark,
+  bookmarks,
+}) {
   const [commentText, setCommentText] = useState({});
 
   const handleCommentChange = (postId, value) => {
@@ -17,7 +27,7 @@ function Home({ user, posts, onLike, onComment }) {
   };
 
   return (
-    <div className="w-full p-6 ">
+    <div className="w-full p-10 ">
       {posts.map((post) => {
         const hasLiked = post.likes?.includes(user.uid);
 
@@ -34,9 +44,12 @@ function Home({ user, posts, onLike, onComment }) {
                   alt="user"
                   className="w-8 h-8 rounded-full object-cover"
                 />
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center gap-2 space-x-1">
                   <span className="font-semibold">{post.userName}</span>
-                  <span className="text-gray-400 text-sm">· 1w</span>
+                  {post?.createdAt &&
+                    formatDistanceToNow(post.createdAt.toDate(), {
+                      addSuffix: true,
+                    })}
                 </div>
               </div>
             </div>
@@ -61,25 +74,35 @@ function Home({ user, posts, onLike, onComment }) {
                     <FaRegHeart />
                   )}
                 </button>
-                <div className="text w-full">
-                  <PostModal
-                    post={post}
-                    user={user}
-                    onLike={onLike}
-                    onComment={onComment}
-                    trigger={
-                      <button className="cursor-pointer">
-                        <FaRegComment />
-                      </button>
-                    }
-                  />
-                </div>
-                <button className="cursor-pointer">
+
+                <PostModal
+                  post={post}
+                  user={user}
+                  onLike={onLike}
+                  onComment={onComment}
+                  trigger={
+                    <button className="cursor-pointer">
+                      <FaRegComment />
+                    </button>
+                  }
+                />
+
+                <button
+                  onClick={() => onShare(post.id)}
+                  className="cursor-pointer"
+                >
                   <BsSend />
                 </button>
               </div>
-              <button className="cursor-pointer">
-                <FaRegBookmark />
+              <button
+                className="cursor-pointer"
+                onClick={() => onBookmark(post.id, bookmarks.includes(post.id))}
+              >
+                {bookmarks.includes(post.id) ? (
+                  <FaBookmark />
+                ) : (
+                  <FaRegBookmark />
+                )}
               </button>
             </div>
 

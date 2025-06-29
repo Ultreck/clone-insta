@@ -24,6 +24,7 @@ import {
   doc,
   arrayUnion,
   arrayRemove,
+  setDoc,
 } from "firebase/firestore";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
@@ -31,12 +32,14 @@ import Create from "./pages/Create";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import { Timestamp } from "firebase/firestore"; // Make sure this is imported
-
+import SuggestedUsersCard from "./components/SuggestedUsersCard";
+// import { doc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 function App() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]); // Each post will include likes and comments
   const [caption, setCaption] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [bookmarks, setBookmarks] = useState([]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -86,25 +89,64 @@ function App() {
     }
   };
 
+  const handleAddComment = async (postId, text) => {
+    if (!text.trim()) return;
 
-const handleAddComment = async (postId, text) => {
-  if (!text.trim()) return;
+    const postRef = doc(db, "posts", postId);
 
-  const postRef = doc(db, "posts", postId);
+    const comment = {
+      userId: user.uid,
+      userName: user.displayName,
+      text,
+      createdAt: Timestamp.now(),
+    };
 
-  const comment = {
-    userId: user.uid,
-    userName: user.displayName,
-    text,
-    createdAt: Timestamp.now(), // ✅ Safe alternative to serverTimestamp
+    await updateDoc(postRef, {
+      comments: arrayUnion(comment),
+    });
+  };
+  const handleShare = async (postId) => {
+    const postUrl = `${window.location.origin}/post/${postId}`; // You can customize this route
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      alert("Link copied to clipboard!");
+    } catch (err) {
+      alert("Failed to copy link.");
+    }
   };
 
-  console.log(text, postId);
 
-  await updateDoc(postRef, {
-    comments: arrayUnion(comment),
-  });
+const handleBookmark = async (postId, isBookmarked) => {
+  const userRef = doc(db, "users", user.uid);
+
+  try {
+    if (isBookmarked) {
+      await setDoc(userRef, {
+        bookmarks: arrayRemove(postId)
+      }, { merge: true });
+    } else {
+      await setDoc(userRef, {
+        bookmarks: arrayUnion(postId)
+      }, { merge: true }); // ✅ This creates the doc if it doesn't exist
+    }
+  } catch (err) {
+    console.error("Bookmark error:", err);
+  }
 };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const userRef = doc(db, "users", user.uid);
+    const unsubUser = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setBookmarks(userData.bookmarks || []);
+      }
+    });
+
+    return () => unsubUser();
+  }, [user]);
 
   if (!user) {
     return (
@@ -118,7 +160,6 @@ const handleAddComment = async (postId, text) => {
       </div>
     );
   }
-console.log(window.location.pathname);
 
   return (
     <Router>
@@ -126,7 +167,7 @@ console.log(window.location.pathname);
         <div className="text w-1/4">
           <Sidebar user={user} onLogout={handleSignOut} />
         </div>
-        <div className="text flex ">
+        <div className="text flex px-5">
           <Routes>
             <Route
               path="/"
@@ -136,6 +177,9 @@ console.log(window.location.pathname);
                   posts={posts}
                   onLike={handleLike}
                   onComment={handleAddComment}
+                  onShare={handleShare}
+                  onBookmark={handleBookmark}
+                  bookmarks={bookmarks}
                 />
               }
             />
@@ -159,13 +203,16 @@ console.log(window.location.pathname);
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        {window.location.pathname === "/" && (
-          <div className="">
-            <h2 className="text-lg font-semibold">Welcome, {user.displayName}!</h2>
-            <p className="text-sm text-gray-600">Explore the latest posts.</p>
-            <div className="text"></div>
-          </div>
-        )}
+          {window.location.pathname === "/" && (
+            <div className="mt-10 w-lg">
+              {/* <h2 className="text-lg font-semibold">
+                Welcome, {user.displayName}!
+              </h2>
+              <p className="text-sm text-gray-600">Explore the latest posts.</p>
+              <div className="text"></div> */}
+              <SuggestedUsersCard user={user}/>
+            </div>
+          )}
         </div>
       </div>
     </Router>
