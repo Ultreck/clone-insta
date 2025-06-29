@@ -28,20 +28,18 @@ import {
 } from "firebase/firestore";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
-import Create from "./pages/Create";
+// import Create from "./pages/Create";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
-import { Timestamp } from "firebase/firestore"; // Make sure this is imported
-// import SuggestedUsersCard from "./components/SuggestedUsersCard";
-// import { doc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { Timestamp } from "firebase/firestore";
+
 function App() {
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]); // Each post will include likes and comments
+  const [posts, setPosts] = useState([]); 
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
-console.log(location);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {

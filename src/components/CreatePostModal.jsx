@@ -1,8 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "../components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
 import { FiPlusSquare } from "react-icons/fi";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,10 +7,15 @@ import { FiX } from "react-icons/fi";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaRegFaceLaughBeam } from "react-icons/fa6";
 import EmojiPicker from "emoji-picker-react";
+import LocationInput from "./LocationInputField";
 
 const MAX_LENGTH = 2200;
 
-const CreatePostModal = ({ user, onPostSubmit, setLocation, location, handlePost }) => {
+const CreatePostModal = ({
+  user,
+  setLocation,
+  handlePost,
+}) => {
   const cLocation = useLocation();
   const active = (path) =>
     cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
@@ -23,14 +24,13 @@ const CreatePostModal = ({ user, onPostSubmit, setLocation, location, handlePost
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  //   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [isNext]);
-console.log(isUploading);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(
@@ -54,27 +54,23 @@ console.log(isUploading);
     setFiles([]);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsUploading(true);
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     // setIsUploading(true);
 
-    try {
-      // Simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+//     try {
+//       handlePost({
+//         caption,
+//         imageUrl: files[0]?.preview || null,
+//       });
 
-      // Call parent component with post data
-      onPostSubmit({
-        caption,
-        imageUrl: files[0]?.preview || null,
-      });
-
-      // Reset form
-      setCaption("");
-      setFiles([]);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+//       // Reset form
+//       setCaption("");
+//       setFiles([]);
+//     } finally {
+//       setIsUploading(false);
+//     }
+//   };
 
   const addEmoji = (emojiData) => {
     const cursorPosition = textareaRef.current.selectionStart;
@@ -189,12 +185,23 @@ console.log(isUploading);
                     onClick={() => setIsNext(false)}
                     className="cursor-pointer"
                   />
-                  <button
-                    onClick={() => setIsNext(true)}
-                    className="text-blue-600 font-semibold cursor-pointer pr-3"
-                  >
-                   {isNext? "Share" :  "Next"}
-                  </button>
+                  {isNext && (
+                    <button
+                      onClick={handlePost}
+                      className="text-blue-600 font-semibold cursor-pointer pr-3"
+                    >
+                      Share
+                    </button>
+                  )}
+
+                  {!isNext && (
+                    <button
+                      onClick={() => setIsNext(true)}
+                      className="text-blue-600 font-semibold cursor-pointer pr-3"
+                    >
+                      Next
+                    </button>
+                  )}
                 </h2>
               )}
 
@@ -248,13 +255,7 @@ console.log(isUploading);
                     )}
                     <div className="text-gray-300">{caption?.length}/2,200</div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Caption"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="border w-full p-2 mb-4 rounded"
-                  />
+                  <LocationInput setLocation={setLocation} />
                 </div>
               )}
             </div>
