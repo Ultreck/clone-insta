@@ -13,7 +13,7 @@ export function AdvancedSettings() {
     <div className="w-full max-w-md mx-auto p-4">
       <Accordion type="single" collapsible defaultValue="advanced-settings">
         <AccordionItem value="advanced-settings">
-          <AccordionTrigger className="hover:no-underline py-2 text-lg font-semibold">
+          <AccordionTrigger className="hover:no-underline py-2 font-normal">
             Advanced settings
           </AccordionTrigger>
           <AccordionContent className="space-y-6 pt-2">

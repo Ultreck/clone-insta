@@ -9,18 +9,16 @@ import { FaRegFaceLaughBeam } from "react-icons/fa6";
 import EmojiPicker from "emoji-picker-react";
 import LocationInput from "./LocationInputField";
 import { AdvancedSettings } from "./AdvancedSettings";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { AddCollaborators } from "./AddCollaborators";
 
 const MAX_LENGTH = 2200;
 
-const CreatePostModal = ({
-  user,
-  setLocation,
-  handlePost,
-}) => {
+const CreatePostModal = ({ user, setLocation, handlePost, setCaption, caption,  setImageUrl }) => {
   const cLocation = useLocation();
   const active = (path) =>
     cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
-  const [caption, setCaption] = useState("");
+//   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState([]);
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
@@ -41,6 +39,13 @@ const CreatePostModal = ({
         })
       )
     );
+    setImageUrl(
+      acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      )
+    );
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -55,23 +60,23 @@ const CreatePostModal = ({
     setFiles([]);
   };
 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     // setIsUploading(true);
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
+  //     // setIsUploading(true);
 
-//     try {
-//       handlePost({
-//         caption,
-//         imageUrl: files[0]?.preview || null,
-//       });
+  //     try {
+  //       handlePost({
+  //         caption,
+  //         imageUrl: files[0]?.preview || null,
+  //       });
 
-//       // Reset form
-//       setCaption("");
-//       setFiles([]);
-//     } finally {
-//       setIsUploading(false);
-//     }
-//   };
+  //       // Reset form
+  //       setCaption("");
+  //       setFiles([]);
+  //     } finally {
+  //       setIsUploading(false);
+  //     }
+  //   };
 
   const addEmoji = (emojiData) => {
     const cursorPosition = textareaRef.current.selectionStart;
@@ -181,15 +186,16 @@ const CreatePostModal = ({
                 </div>
               )}
               {!!files.length && (
-                <h2 className="text-center absolute top-0 border-b w-full flex justify-between bg-white px-10 items-center h-12">
+                <h2 className="text-center z-20 absolute top-0 border-b w-full flex justify-between bg-white px-10 items-center h-12">
                   <FaArrowLeft
                     onClick={() => setIsNext(false)}
                     className="cursor-pointer"
                   />
+                  <p className="text">{isNext ? "Create new post" : "Crop"}</p>
                   {isNext && (
                     <button
                       onClick={handlePost}
-                      className="text-blue-600 font-semibold cursor-pointer pr-3"
+                      className="text-blue-600 z-30 font-semibold cursor-pointer pr-3"
                     >
                       Share
                     </button>
@@ -207,60 +213,67 @@ const CreatePostModal = ({
               )}
 
               {isNext && !!files?.length && (
-                <div className="md:w-2/5 flex flex-col border-l border-gray-300">
-                  <div className="flex items-center gap-3 p-4 mt-12">
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={user.photoURL}
-                        alt="user"
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <div className="flex items-center gap-2 space-x-1">
-                        <span className="font-semibold">
-                          {user.displayName}
-                        </span>
+                <ScrollArea className="md:w-2/5 border max-h-[80vh] space-y-4 overflow-y-auto">
+                  <div className=" flex pb-10 flex-col border-gray-300">
+                    <div className="flex items-center gap-3 p-4 mt-12">
+                      <div className="flex items-center space-x-3">
+                        <img
+                          src={user.photoURL}
+                          alt="user"
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <div className="flex items-center gap-2 space-x-1">
+                          <span className="font-semibold">
+                            {user.displayName}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Caption input */}
-                  <div className="mt-3">
-                    <textarea
-                      ref={textareaRef}
-                      id="caption"
-                      rows={8}
-                      value={caption}
-                      onChange={handleChange}
-                      placeholder=""
-                      maxLength={MAX_LENGTH}
-                      className="w-full  resize-none focus-visible:ring-0 outline-0 border-0 px-3 py-2 border-gray-300"
-                    />
-                  </div>
-                  <div className="text flex border-b py-3 justify-between px-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                      className=" text-gray-500 hover:text-gray-700"
-                    >
-                      <FaRegFaceLaughBeam />
-                    </button>
+                    {/* Caption input */}
+                    <div className="mt-3">
+                      <textarea
+                        ref={textareaRef}
+                        id="caption"
+                        rows={8}
+                        value={caption}
+                        onChange={handleChange}
+                        placeholder=""
+                        maxLength={MAX_LENGTH}
+                        className="w-full  resize-none focus-visible:ring-0 outline-0 border-0 px-3 py-2 border-gray-300"
+                      />
+                    </div>
+                    <div className="text flex border-b py-3 justify-between px-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        className=" text-gray-500 hover:text-gray-700"
+                      >
+                        <FaRegFaceLaughBeam />
+                      </button>
 
-                    {showEmojiPicker && (
-                      <div className="absolute bottom-12 right-0 z-10">
-                        <EmojiPicker
-                          onEmojiClick={addEmoji}
-                          width={300}
-                          height={400}
-                        />
+                      {showEmojiPicker && (
+                        <div className="absolute bottom-12 right-0 z-10">
+                          <EmojiPicker
+                            onEmojiClick={addEmoji}
+                            width={300}
+                            height={400}
+                          />
+                        </div>
+                      )}
+                      <div className="text-gray-300">
+                        {caption?.length}/2,200
                       </div>
-                    )}
-                    <div className="text-gray-300">{caption?.length}/2,200</div>
+                    </div>
+                    <LocationInput setLocation={setLocation} />
+                    <div className="text">
+                      <AddCollaborators user={user} />
+                    </div>
+                    <div className="text">
+                      <AdvancedSettings />
+                    </div>
                   </div>
-                  <LocationInput setLocation={setLocation} />
-                  <div className="text">
-                    <AdvancedSettings/>
-                  </div>
-                </div>
+                </ScrollArea>
               )}
             </div>
           </div>

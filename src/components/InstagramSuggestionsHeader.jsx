@@ -25,7 +25,7 @@ const InstagramSuggestionsHeader = () => {
     },
     {
       username: "gawiel",
-      followedBy: ["Oempress"],
+      followedBy: ["Oempress", "official_pamtel"],
       isVerified: false,
       avatar: "https://randomuser.me/api/portraits/women/1.jpg",
     },
@@ -55,7 +55,7 @@ const InstagramSuggestionsHeader = () => {
     },
     {
       username: "ajetunmobi",
-      followedBy: ["official_pamtel", "Oempress"],
+      followedBy: ["official_pamtel", "Opress"],
       isVerified: false,
       avatar: "https://randomuser.me/api/portraits/men/6.jpg",
     },

@@ -20,11 +20,10 @@ import { cn } from "../lib/utils";
 import cities from "cities-list";
 import { useDebounce } from "../lib/helper";
 
-
 const LocationInputField = ({ setLocation }) => {
-   const [openDropdown, setOpenDropdown] = useState(false);
-   const [searchTerm, setSearchTerm] = useState("");
-   const [selectedCity, setSelectedCity] = useState(searchTerm || "");
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState(searchTerm || "");
 
   const cityArray = useMemo(() => Object.keys(cities), []);
 
@@ -33,28 +32,25 @@ const LocationInputField = ({ setLocation }) => {
   const filteredCities = useMemo(() => {
     if (!debouncedSearch) return [];
     return cityArray
-      .filter((city) => city.toLowerCase().includes(debouncedSearch.toLowerCase()))
+      .filter((city) =>
+        city.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
       .slice(0, 250);
   }, [debouncedSearch, cityArray]);
 
-  const handleCitySelect = useCallback(
-    async (cityName) => {
-      try {
-        console.log(cityName);
-        setLocation(cityName);
-        
-      } catch (err) {
-        console.error(`Failed to fetch weather for ${cityName}`, err);
-      };
+  const handleCitySelect = useCallback(async (cityName) => {
+    try {
+      setLocation(cityName);
+    } catch (err) {
+      console.error(`Failed to fetch weather for ${cityName}`, err);
+    }
 
-      setSelectedCity(cityName);
-      setSearchTerm("");
-    },
-    []
-  );
+    setSelectedCity(cityName);
+    setSearchTerm("");
+  }, []);
 
   return (
-       <Popover open={openDropdown} onOpenChange={setOpenDropdown}>
+    <Popover open={openDropdown} onOpenChange={setOpenDropdown}>
       <PopoverTrigger asChild>
         <Button
           role="combobox"
@@ -106,9 +102,7 @@ const LocationInputField = ({ setLocation }) => {
                     </CommandItem>
                   ))
                 ) : (
-                  <>
-                  
-                  </>
+                  <></>
                 )}
 
                 <ScrollBar orientation="vertical" />
@@ -118,7 +112,7 @@ const LocationInputField = ({ setLocation }) => {
         </Command>
       </PopoverContent>
     </Popover>
-  )
-}
+  );
+};
 
-export default LocationInputField
+export default LocationInputField;

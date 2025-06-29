@@ -33,7 +33,6 @@ export default function PostModal({
     onComment(post.id, comment);
     setComment("");
   };
-  console.log(post);
 
   return (
     <Dialog>
@@ -64,7 +63,7 @@ export default function PostModal({
                 <button className="text-gray-400 text-sm">•••</button>
               </div>
 
-              <ScrollArea className="flex-1 px-4 py-8 space-y-4">
+              <ScrollArea className="flex-1 px-4 py-8 max-h-[400px] space-y-4">
                 {post?.comments?.map((c, idx) => (
                   <div key={idx} className="text-sm my-3">
                     <span className="font-semibold">{c?.userName}</span>{" "}

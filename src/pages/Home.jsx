@@ -134,6 +134,8 @@ function Home({
                 user={user}
                 onLike={onLike}
                 onComment={onComment}
+                onBookmark={onBookmark}
+                bookmarks={bookmarks}
                 trigger={
                   <p className="px-4 cursor-pointer text-sm text-gray-500 mb-3">
                     View all {post.comments?.length || 0} comments

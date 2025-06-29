@@ -25,17 +25,18 @@ import {
   arrayUnion,
   arrayRemove,
   setDoc,
+  Timestamp
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
-// import Create from "./pages/Create";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
-import { Timestamp } from "firebase/firestore";
+
 
 function App() {
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]); 
+  const [posts, setPosts] = useState([]);
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -60,22 +61,40 @@ function App() {
 
   const handleSignOut = () => signOut(auth);
 
-  const handlePost = async () => {
-    if (caption && imageUrl) {
-      await addDoc(collection(db, "posts"), {
-        caption,
-        imageUrl,
-        userName: user.displayName,
-        createdAt: serverTimestamp(),
-        userPic: user.photoURL,
-        location: location,
-        likes: [],
-        comments: [],
-      });
-      setCaption("");
-      setImageUrl("");
-    }
-  };
+const handlePost = async () => {
+  if (!caption || !imageUrl) return; // Changed from imageUrl to imageFile
+
+  try {
+    // 1. Upload image to Firebase Storage
+    const storage = getStorage();
+    const storageRef = ref(storage, `posts/${user.uid}/${Date.now()}`);
+    const snapshot = await uploadBytes(storageRef, imageUrl);
+    
+    // 2. Get download URL
+    const imageFile = await getDownloadURL(snapshot.ref);
+
+    // 3. Save post data to Firestore
+    await addDoc(collection(db, "posts"), {
+      caption,
+      imageFile, // Now storing just the URL string
+      userName: user.displayName,
+      createdAt: serverTimestamp(),
+      userPic: user.photoURL,
+      location: location,
+      likes: [],
+      comments: [],
+    });
+
+    // Reset form
+    setCaption("");
+    setImageUrl(null); // Changed from setImageUrl("")
+    setLocation("");
+
+  } catch (error) {
+    console.error("Error creating post:", error);
+    // Add error handling UI here
+  }
+};
 
   const handleLike = async (postId, hasLiked) => {
     const postRef = doc(db, "posts", postId);
@@ -116,24 +135,31 @@ function App() {
     }
   };
 
+  const handleBookmark = async (postId, isBookmarked) => {
+    const userRef = doc(db, "users", user.uid);
 
-const handleBookmark = async (postId, isBookmarked) => {
-  const userRef = doc(db, "users", user.uid);
-
-  try {
-    if (isBookmarked) {
-      await setDoc(userRef, {
-        bookmarks: arrayRemove(postId)
-      }, { merge: true });
-    } else {
-      await setDoc(userRef, {
-        bookmarks: arrayUnion(postId)
-      }, { merge: true }); // ✅ This creates the doc if it doesn't exist
+    try {
+      if (isBookmarked) {
+        await setDoc(
+          userRef,
+          {
+            bookmarks: arrayRemove(postId),
+          },
+          { merge: true }
+        );
+      } else {
+        await setDoc(
+          userRef,
+          {
+            bookmarks: arrayUnion(postId),
+          },
+          { merge: true }
+        ); // ✅ This creates the doc if it doesn't exist
+      }
+    } catch (err) {
+      console.error("Bookmark error:", err);
     }
-  } catch (err) {
-    console.error("Bookmark error:", err);
-  }
-};
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -166,7 +192,16 @@ const handleBookmark = async (postId, isBookmarked) => {
     <Router>
       <div className="bg-gray-50 min-h-screen font-sans flex w-full">
         <div className="text w-1/4">
-          <Sidebar  handlePost={handlePost} location={location} setLocation={setLocation} user={user} onLogout={handleSignOut} />
+          <Sidebar
+            handlePost={handlePost}
+            setCaption={setCaption}
+            caption={caption}
+            location={location}
+            setLocation={setLocation}
+            user={user}
+            onLogout={handleSignOut}
+            setImageUrl={setImageUrl}
+          />
         </div>
         <div className="text w-3/5">
           <Routes>
