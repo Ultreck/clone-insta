@@ -31,22 +31,19 @@ const CreatePostModal = ({ user, setLocation, handlePost, setCaption, caption,  
     }
   }, [isNext]);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    setFiles(
-      acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      )
-    );
-    setImageUrl(
-      acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      )
-    );
-  }, []);
+ const onDrop = useCallback((acceptedFiles) => {
+  const file = acceptedFiles[0];
+
+  // Add preview only for display
+  const previewFile = Object.assign(file, {
+    preview: URL.createObjectURL(file),
+  });
+
+  setFiles([previewFile]);
+  setImageUrl(file);
+}, []);
+
+console.log(files);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

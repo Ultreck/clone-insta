@@ -36,7 +36,7 @@ function Home({
         <InstagramSuggestionsHeader/>
         {posts.map((post) => {
           const hasLiked = post.likes?.includes(user.uid);
-
+          
           return (
             <div
               key={post.id}
@@ -46,7 +46,7 @@ function Home({
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center space-x-3">
                   <img
-                    src={user.photoURL}
+                    src={post?.userPic}
                     alt="user"
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -62,7 +62,7 @@ function Home({
 
               {/* Image */}
               <img
-                src={post.imageUrl}
+                src={post?.imageUrl}
                 alt="post"
                 className="w-full object-cover max-h-[600px]"
               />

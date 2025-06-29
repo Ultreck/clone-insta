@@ -27,7 +27,7 @@ import {
   setDoc,
   Timestamp
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -41,13 +41,14 @@ function App() {
   const [location, setLocation] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
-
+  // const [progress, setProgress] = useState(0);
+// const [downloadUrl, setDownloadUrl] = useState(null);
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
 
-    const unsub = onSnapshot(collection(db, "posts"), (snapshot) => {
+    const unsub = onSnapshot(collection(db, "instagram"), (snapshot) => {
       setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
@@ -62,39 +63,43 @@ function App() {
   const handleSignOut = () => signOut(auth);
 
 const handlePost = async () => {
-  if (!caption || !imageUrl) return; // Changed from imageUrl to imageFile
+  if (!caption || !imageUrl) return;
 
   try {
-    // 1. Upload image to Firebase Storage
     const storage = getStorage();
-    const storageRef = ref(storage, `posts/${user.uid}/${Date.now()}`);
-    const snapshot = await uploadBytes(storageRef, imageUrl);
-    
-    // 2. Get download URL
-    const imageFile = await getDownloadURL(snapshot.ref);
+    const filename = `instagram/${user.uid}/${Date.now()}`;
+    const storageRef = ref(storage, filename);
 
-    // 3. Save post data to Firestore
-    await addDoc(collection(db, "posts"), {
+    // ✅ Upload the real File object
+    const uploadSnapshot = await uploadBytes(storageRef, imageUrl);
+
+    // ✅ Get the download URL
+    const downloadURL = await getDownloadURL(uploadSnapshot.ref);
+console.log(downloadURL);
+
+    // ✅ Save this correct download URL to Firestore
+    await addDoc(collection(db, "instagram"), {
       caption,
-      imageFile, // Now storing just the URL string
+      imageUrl: downloadURL, // MUST match how you render it later
       userName: user.displayName,
-      createdAt: serverTimestamp(),
       userPic: user.photoURL,
-      location: location,
+      createdAt: serverTimestamp(),
+      location,
       likes: [],
       comments: [],
     });
 
-    // Reset form
+    // ✅ Reset state
     setCaption("");
-    setImageUrl(null); // Changed from setImageUrl("")
+    setImageUrl(null);
     setLocation("");
 
   } catch (error) {
-    console.error("Error creating post:", error);
-    // Add error handling UI here
+    console.error("❌ Upload failed:", error.message);
   }
 };
+
+console.log(posts);
 
   const handleLike = async (postId, hasLiked) => {
     const postRef = doc(db, "posts", postId);
