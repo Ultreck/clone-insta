@@ -12,6 +12,7 @@ import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
 import { useDebounce } from "../lib/helper";
+import ThreeColorSpinner from "./ThreeColorSpinner";
 
 const MAX_LENGTH = 2200;
 
@@ -22,6 +23,8 @@ const CreatePostModal = ({
   setCaption,
   caption,
   setImageUrl,
+  isSubmitting,
+  setIsSubmitting,
 }) => {
   const cLocation = useLocation();
   const active = (path) =>
@@ -79,12 +82,13 @@ const CreatePostModal = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setCaption(textareaValue);
-    }, 0); 
+    }, 0);
 
     return () => clearTimeout(timeout);
   }, [textareaValue, setCaption]);
 
-
+  console.log(isSubmitting);
+  
   return (
     <Dialog onOpenAutoFocus={(e) => e.preventDefault()}>
       <form>
@@ -105,6 +109,11 @@ const CreatePostModal = ({
           } min-h-[80vh] bg-white`}
         >
           <div className="text w-full h-full md:h-full">
+            {isSubmitting && (
+              <div className="text fixed w-full h-full bg-gray-700/80 z-30 flex justify-center items-center">
+                <ThreeColorSpinner />
+              </div>
+            )}
             {/* <h2 className="text-center h-10">Create new post</h2> */}
             <div className="md:flex w-full h-full md:h-full border-0">
               {/* Drag and drop area */}

@@ -3,7 +3,7 @@ import { FiHome, FiLogOut, FiUser, FiBell } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
 import CreatePostModal from './CreatePostModal';
 
-function Sidebar({ user, onLogout, location, setLocation, handlePost, setCaption, caption,  setImageUrl }) {
+function Sidebar({ user, onLogout, location, setLocation, handlePost, setCaption, caption,  setImageUrl, isSubmitting, setIsSubmitting }) {
   const cLocation = useLocation();
   const active = (path) => cLocation.pathname === path ? 'text-pink-600' : 'text-gray-800';
 
@@ -18,7 +18,7 @@ function Sidebar({ user, onLogout, location, setLocation, handlePost, setCaption
           {/* <Link to="/create" className={`flex items-center space-x-2 ${active('/create')} hover:text-pink-600`}>
             <FiPlusSquare className="text-2xl" /> <span className="hidden md:inline">Create</span>
           </Link> */}
-          <CreatePostModal  handlePost={handlePost} location={location}  setImageUrl={setImageUrl} setLocation={setLocation} user={user} setCaption={setCaption} caption={caption} />
+          <CreatePostModal setIsSubmitting={setIsSubmitting} isSubmitting={isSubmitting} handlePost={handlePost} location={location}  setImageUrl={setImageUrl} setLocation={setLocation} user={user} setCaption={setCaption} caption={caption} />
           <Link to="/profile" className={`flex items-center space-x-2 ${active('/profile')} hover:text-pink-600`}>
             <FiUser className="text-2xl" /> <span className="hidden md:inline">Profile</span>
           </Link>

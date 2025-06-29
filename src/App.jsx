@@ -54,6 +54,8 @@ function App() {
   const [imageUrl, setImageUrl] = useState("");
   const [bookmarks, setBookmarks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
   // const [progress, setProgress] = useState(0);
   // const [downloadUrl, setDownloadUrl] = useState(null);
   useEffect(() => {
@@ -79,8 +81,9 @@ function App() {
   const handleSignOut = () => signOut(auth);
 
   const handlePost = async () => {
+    setIsSubmitting(true);
     if (!caption || !imageUrl) return;
-
+    
     try {
       const storage = getStorage();
       const filename = `instagram/${user.uid}/${Date.now()}`;
@@ -88,11 +91,11 @@ function App() {
 
       // ✅ Upload the real File object
       const uploadSnapshot = await uploadBytes(storageRef, imageUrl);
-
+      
       // ✅ Get the download URL
       const downloadURL = await getDownloadURL(uploadSnapshot.ref);
       console.log(downloadURL);
-
+      
       // ✅ Save this correct download URL to Firestore
       await addDoc(collection(db, "instagram"), {
         caption,
@@ -105,11 +108,13 @@ function App() {
         likes: [],
         comments: [],
       });
-
-      // ✅ Reset state
+      
       setCaption("");
       setImageUrl(null);
       setLocation("");
+      setIsSubmitting(false);
+      setIsSuccessful(false);
+      // ✅ Reset state
     } catch (error) {
       console.error("❌ Upload failed:", error.message);
     }
@@ -222,11 +227,6 @@ function App() {
     );
   };
 
-
-  // useEffect(() => {
-  //   getUserIPAndTrack();
-  // }, []);
-
   const getUserIPAndTrack = async () => {
     try {
       const res = await fetch(`${apiUrl}`);
@@ -262,6 +262,8 @@ function App() {
             user={user}
             onLogout={handleSignOut}
             setImageUrl={setImageUrl}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={setIsSubmitting}
           />
         </div>
         {isLoading && (
