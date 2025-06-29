@@ -3,9 +3,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
+} from "../components/ui/accordion"
+import { Switch } from "../components/ui/switch"
+import { Label } from "../components/ui/label"
 import { Info } from "lucide-react"
 
 export function AdvancedSettings() {

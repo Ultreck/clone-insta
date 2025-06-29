@@ -8,6 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaRegFaceLaughBeam } from "react-icons/fa6";
 import EmojiPicker from "emoji-picker-react";
 import LocationInput from "./LocationInputField";
+import { AdvancedSettings } from "./AdvancedSettings";
 
 const MAX_LENGTH = 2200;
 
@@ -256,6 +257,9 @@ const CreatePostModal = ({
                     <div className="text-gray-300">{caption?.length}/2,200</div>
                   </div>
                   <LocationInput setLocation={setLocation} />
+                  <div className="text">
+                    <AdvancedSettings/>
+                  </div>
                 </div>
               )}
             </div>
