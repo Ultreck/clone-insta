@@ -40,11 +40,11 @@ export default function PostModal({
       <Portal>
         <DialogContent className="p-0 border-0 sm:max-w-lg md:max-w-2xl lg:max-w-5xl min-h-[90vh] bg-gray-200">
           <div className="md:flex w-full h-full md:h-auto border-0">
-            <div className=" bg-white md:w-1/2 md:h-auto overflow-hidden">
+            <div className=" bg-white md:w-1/2 md:min-h-[90vh] overflow-hidden">
               <img
                 src={post?.imageUrl}
                 alt="Post"
-                className="w-full object-fill md:object-cover max-h-[60vw] md:max-h-[90vh]"
+                className="w-full object-fill md:object-cover md:min-h-[90vh]"
               />
             </div>
 
