@@ -73,7 +73,7 @@ function Home({
               <img
                 src={post?.imageUrl}
                 alt="post"
-                className="w-full object-cover max-h-[600px]"
+                className="w-full object-cover min-h-[75vh]"
               />
 
               {/* Action icons */}
