@@ -27,13 +27,14 @@ import {
   setDoc,
   Timestamp,
   deleteDoc,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import {
   getStorage,
   ref,
   uploadBytes,
   getDownloadURL,
-  uploadBytesResumable,
   deleteObject,
 } from "firebase/storage";
 import Sidebar from "./components/Sidebar";
@@ -58,21 +59,28 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [open, setOpen] = useState(false);
-  // const [progress, setProgress] = useState(0);
-  // const [downloadUrl, setDownloadUrl] = useState(null);
+
   useEffect(() => {
     setIsLoading(true);
     onAuthStateChanged(auth, (user) => {
-      // if (user) setIsLoading(false);
       setUser(user);
     });
 
-    const unsub = onSnapshot(collection(db, "instagram"), (snapshot) => {
-      setIsLoading(false);
-      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    });
+    const q = query(
+    collection(db, "instagram"),
+    orderBy("createdAt", "desc")
+  );
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    setIsLoading(false);
+    setPosts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  });
+  // const unsub = onSnapshot(collection(db, "instagram"), (snapshot) => {
+  //     setIsLoading(false);
+  //     setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  //   });
 
-    return () => unsub();
+    return () => unsubscribe();
+    // return () => unsub();
   }, []);
 
   const handleSignIn = () => {
@@ -91,17 +99,14 @@ function App() {
       const filename = `instagram/${user.uid}/${Date.now()}`;
       const storageRef = ref(storage, filename);
 
-      // ✅ Upload the real File object
       const uploadSnapshot = await uploadBytes(storageRef, imageUrl);
 
-      // ✅ Get the download URL
       const downloadURL = await getDownloadURL(uploadSnapshot.ref);
       console.log(downloadURL);
 
-      // ✅ Save this correct download URL to Firestore
       await addDoc(collection(db, "instagram"), {
         caption,
-        imageUrl: downloadURL, // MUST match how you render it later
+        imageUrl: downloadURL,
         userName: user.displayName,
         userId: user.uid,
         userPic: user.photoURL,
@@ -130,7 +135,7 @@ function App() {
       const path = decodeURIComponent(imageUrl.split("/o/")[1].split("?")[0]);
       const imageRef = ref(storage, path);
       await deleteObject(imageRef);
-      toast.success("Post deleted!");
+      toast.error("Post deleted!");
       console.log("Post deleted");
     } catch (error) {
       console.error("Error deleting post:", error.message);
