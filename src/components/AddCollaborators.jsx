@@ -10,7 +10,9 @@ import { ChevronDown } from "lucide-react";
 import { FaFacebook } from "react-icons/fa";
 import { HiOutlineUserPlus } from "react-icons/hi2";
 import { Switch } from "@radix-ui/react-switch";
-export function AddCollaborators({user}) {
+export function AddCollaborators({ user, files }) {
+  console.log(user, files);
+
   return (
     <div className="w-full max-w-md mx-auto p-4 space-y-6">
       {/* Collaborator Input */}
@@ -39,7 +41,11 @@ export function AddCollaborators({user}) {
             <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="text w-10 h-10 relative bg-gray-100 rounded-full">
-                    <img src={user?.photoURL} alt="" className="text rounded-full" />
+                  <img
+                    src={user?.photoURL}
+                    alt=""
+                    className="text rounded-full"
+                  />
                   <FaFacebook className="w-5 h-5 text-blue-600 absolute -bottom-3 right-0" />
                 </div>
                 <div>
@@ -47,7 +53,7 @@ export function AddCollaborators({user}) {
                   <p className="text-sm text-gray-500">Facebook - Friends</p>
                 </div>
               </div>
-             <Switch id="share-post" />
+              <Switch id="share-post" />
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -67,12 +73,22 @@ export function AddCollaborators({user}) {
               Alt text will be automatically created for your photos or you can
               choose to write your own.
             </p>
-            <Button
-              variant="outline"
-              className="w-full justify-start text-gray-700"
-            >
-              Write alt text...
-            </Button>
+            <div className="text flex gap-2">
+              <div className="text w-12 h-12 bg-gray-100 ">
+                <img
+                  src={files[0].preview}
+                  alt="Preview"
+                  onLoad={() => URL.revokeObjectURL(files[0].preview)}
+                  className="text w-full h-full"
+                />
+              </div>
+
+              <input
+                id="collaborators"
+                placeholder="Add collaborators"
+                className="flex-1 bg-gray-50 border-0 shadow-none focus-visible: right-0 focus-within:ring-0 outline-0"
+              />
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

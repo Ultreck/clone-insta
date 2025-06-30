@@ -11,7 +11,7 @@ import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
 import ThreeColorSpinner from "./ThreeColorSpinner";
-import usePost from "../hooks/usePost";
+// import usePost from "../hooks/usePost";
 
 const MAX_LENGTH = 2200;
 
@@ -276,7 +276,7 @@ const CreatePostModal = ({
                     </div>
                     <LocationInput setLocation={setLocation} />
                     <div className="text">
-                      <AddCollaborators user={user} />
+                      <AddCollaborators user={user} files={files}/>
                     </div>
                     <div className="text">
                       <AdvancedSettings />
