@@ -14,6 +14,8 @@ function Sidebar({
   setImageUrl,
   isSubmitting,
   setIsSubmitting,
+  open,
+  setOpen
 }) {
   const cLocation = useLocation();
   const active = (path) =>
@@ -42,7 +44,9 @@ function Sidebar({
             triger={
               <div
                 onClick={() => setOpen(true)}
-                className={`flex items-center space-x-2`}
+                className={`flex items-center cursor-pointer space-x-2 ${active(
+              "/create"
+            )} hover:text-pink-600`}
               >
                 <FiPlusSquare className="text-2xl" />{" "}
                 <span className="hidden md:inline">Create</span>
@@ -57,6 +61,10 @@ function Sidebar({
             user={user}
             setCaption={setCaption}
             caption={caption}
+            open={open}
+            setOpen={setOpen}
+            type={'create'}
+            post={''}
           />
           <Link
             to="/profile"

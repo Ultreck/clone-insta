@@ -44,7 +44,7 @@ const usePost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
-
+  const [open, setOpen] = useState(false);
   // const [progress, setProgress] = useState(0);
   // const [downloadUrl, setDownloadUrl] = useState(null);
   useEffect(() => {
@@ -278,6 +278,8 @@ const usePost = () => {
     handleShare,
     isSuccessful,
     setIsSuccessful,
+    open,
+    setOpen,
   };
 };
 

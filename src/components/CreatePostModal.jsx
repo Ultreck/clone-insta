@@ -11,6 +11,7 @@ import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
 import ThreeColorSpinner from "./ThreeColorSpinner";
+import usePost from "../hooks/usePost";
 
 const MAX_LENGTH = 2200;
 
@@ -22,17 +23,19 @@ const CreatePostModal = ({
   caption,
   setImageUrl,
   isSubmitting,
-  triger
+  triger,
+  open,
+  setOpen,
+//   type,
+//   post
 }) => {
-  const cLocation = useLocation();
-  const active = (path) =>
-    cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
+    // const {open, setOpen} = usePost();
   //   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState([]);
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [open, setOpen] = useState(false);
+//   const [open, setOpen] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
 
   useEffect(() => {
@@ -48,7 +51,7 @@ const CreatePostModal = ({
       setTextareaValue("");
       setFiles([]);
     }
-  }, [isSubmitting]);   
+  }, [isSubmitting]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -83,7 +86,6 @@ const CreatePostModal = ({
     setCaption(newCaption);
   };
 
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setCaption(textareaValue);
@@ -92,7 +94,6 @@ const CreatePostModal = ({
     return () => clearTimeout(timeout);
   }, [textareaValue, setCaption]);
 
-  console.log(isSubmitting);
 
   return (
     <Dialog
@@ -102,14 +103,7 @@ const CreatePostModal = ({
     >
       <form>
         <DialogTrigger asChild>
-          <div
-            onClick={() => setOpen(true)}
-            className={`flex items-center cursor-pointer space-x-2 ${active(
-              "/create"
-            )} hover:text-pink-600`}
-          >
-           {triger}
-          </div>
+          <div onClick={() => setOpen(true)}>{triger}</div>
         </DialogTrigger>
         <DialogContent
           onOpenAutoFocus={(e) => e.preventDefault()}

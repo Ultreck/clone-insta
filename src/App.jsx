@@ -57,6 +57,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [open, setOpen] = useState(false);
   // const [progress, setProgress] = useState(0);
   // const [downloadUrl, setDownloadUrl] = useState(null);
   useEffect(() => {
@@ -84,7 +85,7 @@ function App() {
   const handlePost = async () => {
     setIsSubmitting(true);
     if (!caption || !imageUrl) return;
-    
+
     try {
       const storage = getStorage();
       const filename = `instagram/${user.uid}/${Date.now()}`;
@@ -92,11 +93,11 @@ function App() {
 
       // ✅ Upload the real File object
       const uploadSnapshot = await uploadBytes(storageRef, imageUrl);
-      
+
       // ✅ Get the download URL
       const downloadURL = await getDownloadURL(uploadSnapshot.ref);
       console.log(downloadURL);
-      
+
       // ✅ Save this correct download URL to Firestore
       await addDoc(collection(db, "instagram"), {
         caption,
@@ -109,13 +110,13 @@ function App() {
         likes: [],
         comments: [],
       });
-      
+
       setCaption("");
       setImageUrl(null);
       setLocation("");
       setIsSubmitting(false);
       setIsSuccessful(false);
-        toast.success("Post created!");
+      toast.success("Post created!");
       // ✅ Reset state
     } catch (error) {
       console.error("❌ Upload failed:", error.message);
@@ -129,7 +130,7 @@ function App() {
       const path = decodeURIComponent(imageUrl.split("/o/")[1].split("?")[0]);
       const imageRef = ref(storage, path);
       await deleteObject(imageRef);
-         toast.success("Post deleted!");
+      toast.success("Post deleted!");
       console.log("Post deleted");
     } catch (error) {
       console.error("Error deleting post:", error.message);
@@ -138,20 +139,20 @@ function App() {
   };
 
   const handleEditPost = async (postId, updatedData) => {
-  try {
-    const postRef = doc(db, "instagram", postId);
-    await updateDoc(postRef, {
-      caption: updatedData.caption,
-      imageFile: updatedData.imageFile,
-      updatedAt: new Date()
-    });
-    toast.success("Post updated successfully!");
-    console.log("Post updated");
-  } catch (error) {
-    console.error("Error updating post:", error.message);
-    toast.error("Failed to update post.");
-  }
-};
+    try {
+      const postRef = doc(db, "instagram", postId);
+      await updateDoc(postRef, {
+        caption: updatedData.caption,
+        imageFile: updatedData.imageFile,
+        updatedAt: new Date(),
+      });
+      toast.success("Post updated successfully!");
+      console.log("Post updated");
+    } catch (error) {
+      console.error("Error updating post:", error.message);
+      toast.error("Failed to update post.");
+    }
+  };
 
   const handleLike = async (postId, hasLiked) => {
     const postRef = doc(db, "instagram", postId);
@@ -220,7 +221,7 @@ function App() {
 
   useEffect(() => {
     if (!user) return;
-      getUserIPAndTrack();
+    getUserIPAndTrack();
     const userRef = doc(db, "users", user.uid);
     const unsubUser = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -243,7 +244,7 @@ function App() {
         </button>
       </div>
     );
-  };
+  }
 
   const getUserIPAndTrack = async () => {
     try {
@@ -264,7 +265,7 @@ function App() {
       window.localStorage.setItem("visitedOnce", JSON.stringify("true"));
     } catch (error) {
       console.error("Tracking error:", error);
-    };
+    }
   };
 
   return (
@@ -282,6 +283,8 @@ function App() {
             setImageUrl={setImageUrl}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
+            open={open}
+            setOpen={setOpen}
           />
         </div>
         {isLoading && (
@@ -303,6 +306,8 @@ function App() {
                   onBookmark={handleBookmark}
                   bookmarks={bookmarks}
                   onDeletePost={handleDeletePost}
+                  open={open}
+                  setOpen={setOpen}
                 />
               }
             />

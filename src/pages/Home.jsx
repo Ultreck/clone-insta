@@ -24,6 +24,8 @@ function Home({
   onBookmark,
   bookmarks,
   onDeletePost,
+  open,
+  setOpen,
 }) {
   const [commentText, setCommentText] = useState({});
 
@@ -62,7 +64,7 @@ function Home({
                 </div>
                 {/* {user?.uid === post.userId && ( */}
                   <div className="text">
-                    <DeletePostDropdown imageUrl={post?.imageUrl} postId={post?.id} onDeletePost={onDeletePost} />
+                    <DeletePostDropdown post={post} open={open} setOpen={setOpen} imageUrl={post?.imageUrl} postId={post?.id} onDeletePost={onDeletePost} />
                   </div>
                 {/* )} */}
               </div>
