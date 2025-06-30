@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTrigger } from "../components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "../components/ui/dialog";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -11,6 +16,7 @@ import { AdvancedSettings } from "./AdvancedSettings";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AddCollaborators } from "./AddCollaborators";
 import ThreeColorSpinner from "./ThreeColorSpinner";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 // import usePost from "../hooks/usePost";
 
 const MAX_LENGTH = 2200;
@@ -26,16 +32,16 @@ const CreatePostModal = ({
   triger,
   open,
   setOpen,
-//   type,
-//   post
+  //   type,
+  //   post
 }) => {
-    // const {open, setOpen} = usePost();
+  // const {open, setOpen} = usePost();
   //   const [caption, setCaption] = useState("");
   const [files, setFiles] = useState([]);
   const [isNext, setIsNext] = useState(false);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-//   const [open, setOpen] = useState(false);
+  //   const [open, setOpen] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
 
   useEffect(() => {
@@ -94,7 +100,6 @@ const CreatePostModal = ({
     return () => clearTimeout(timeout);
   }, [textareaValue, setCaption]);
 
-
   return (
     <Dialog
       open={open}
@@ -106,11 +111,15 @@ const CreatePostModal = ({
           <div onClick={() => setOpen(true)}>{triger}</div>
         </DialogTrigger>
         <DialogContent
+          aria-describedby={undefined}
           onOpenAutoFocus={(e) => e.preventDefault()}
           className={`p-0 border-0 sm:max-w-lg ${
             isNext && !!files?.length && "md:max-w-2xl lg:max-w-3xl"
           } min-h-[80vh] bg-white`}
         >
+          <VisuallyHidden>
+            <DialogTitle>Profile Settings</DialogTitle>
+          </VisuallyHidden>
           <div className="text w-full h-full md:h-full">
             {isSubmitting && (
               <div className="text fixed w-full h-full bg-gray-700/80 z-30 flex justify-center items-center">
@@ -276,7 +285,7 @@ const CreatePostModal = ({
                     </div>
                     <LocationInput setLocation={setLocation} />
                     <div className="text">
-                      <AddCollaborators user={user} files={files}/>
+                      <AddCollaborators user={user} files={files} />
                     </div>
                     <div className="text">
                       <AdvancedSettings />
