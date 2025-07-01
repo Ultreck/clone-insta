@@ -115,7 +115,7 @@ const CreatePostModal = ({
           onOpenAutoFocus={(e) => e.preventDefault()}
           className={`p-0 border-0 sm:max-w-lg ${
             isNext && !!files?.length && "md:max-w-2xl lg:max-w-3xl"
-          } min-h-[80vh] bg-white`}
+          } md:max-h-[80vh] bg-white`}
         >
           <VisuallyHidden>
             <DialogTitle>Profile Settings</DialogTitle>
@@ -164,7 +164,7 @@ const CreatePostModal = ({
                 <div
                   className={`relative ${
                     isNext && !!files?.length ? "md:w-3/5" : "w-full"
-                  } h-[80vh] group`}
+                  } ${!isNext? 'min-h-[80vh]' : 'md:max-h-[80vh] h-[50vh]'} group`}
                 >
                   <h2
                     className={`text-center absolute top-0 border-b ${
@@ -185,9 +185,9 @@ const CreatePostModal = ({
                   <img
                     src={files[0].preview}
                     alt="Preview"
-                    className={`w-full h-full ${
+                    className={`w-full ${
                       !isNext && "rounded-br-lg"
-                    } object-cover rounded-bl-lg `}
+                    } ${!isNext? 'object-cover  h-[80vh] ' : 'md:h-[80vh] h-full md:object-cover object-fill'} rounded-bl-lg `}
                     onLoad={() => URL.revokeObjectURL(files[0].preview)}
                   />
                   <button
@@ -226,9 +226,9 @@ const CreatePostModal = ({
               )}
 
               {isNext && !!files?.length && (
-                <ScrollArea className="md:w-2/5 border max-h-[80vh] space-y-4 overflow-y-auto">
+                <ScrollArea className="md:w-2/5 border max-h-[46vh] md:max-h-[80vh] space-y-4 overflow-y-auto">
                   <div className=" flex pb-10 flex-col border-gray-300">
-                    <div className="flex items-center gap-3 p-4 mt-12">
+                    <div className="flex items-center gap-3 p-4 md:mt-12">
                       <div className="flex items-center space-x-3">
                         <img
                           src={user.photoURL}
@@ -244,11 +244,30 @@ const CreatePostModal = ({
                     </div>
 
                     {/* Caption input */}
-                    <div className="mt-3">
+                    <div className="mt-3 hidden lg:block">
                       <textarea
                         ref={textareaRef}
                         id="caption"
                         rows={8}
+                        value={textareaValue}
+                        onChange={(e) => {
+                          if (e.target.value.length <= MAX_LENGTH) {
+                            setTextareaValue(e.target.value);
+                          }
+                        }}
+                        // onKeyUp={handleMouseUp}
+                        placeholder=""
+                        // maxLength={MAX_LENGTH}
+                        className="w-full  resize-none focus-visible:ring-0 outline-0 border-0 px-3 py-2 border-gray-300"
+                      />
+                    </div>
+
+                    {/* Caption input */}
+                    <div className="mt-3 lg:hidden">
+                      <textarea
+                        ref={textareaRef}
+                        id="caption"
+                        rows={3}
                         value={textareaValue}
                         onChange={(e) => {
                           if (e.target.value.length <= MAX_LENGTH) {
