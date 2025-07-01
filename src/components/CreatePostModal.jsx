@@ -244,7 +244,7 @@ const CreatePostModal = ({
                     </div>
 
                     {/* Caption input */}
-                    <div className="mt-3 hidden lg:block">
+                    <div className="mt-3 hidden md:block">
                       <textarea
                         ref={textareaRef}
                         id="caption"
@@ -263,7 +263,7 @@ const CreatePostModal = ({
                     </div>
 
                     {/* Caption input */}
-                    <div className="mt-3 lg:hidden">
+                    <div className="mt-3 md:hidden">
                       <textarea
                         ref={textareaRef}
                         id="caption"
