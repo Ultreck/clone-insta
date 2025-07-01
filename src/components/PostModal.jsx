@@ -44,7 +44,7 @@ export default function PostModal({
               <img
                 src={post?.imageUrl}
                 alt="Post"
-                className="w-full object-center md:object-cover min-h-[40vh] md:min-h-[90vh]"
+                className="w-full object-cover min-h-[40vh] md:min-h-[90vh]"
               />
             </div>
 
