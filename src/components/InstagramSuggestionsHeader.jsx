@@ -82,7 +82,7 @@ const InstagramSuggestionsHeader = () => {
       >
         <CarouselContent className="-ml-1 gap-2 py-2 px-5">
           {suggestions.map((user, index) => (
-            <CarouselItem key={index} className="pl-1 basis-2/5">
+            <CarouselItem key={index} className="pl-1 basis-3/5 lg:basis-2/5">
               <Card className="border-0 rounded shadow-none p-0">
                 <CardContent className="flex flex-col items-center p-4">
                   <div className="relative mb-3">

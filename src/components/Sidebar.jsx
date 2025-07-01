@@ -22,7 +22,7 @@ function Sidebar({
     cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-20 md:w-64 bg-white shadow flex flex-col justify-between p-4">
+    <aside className="fixed left-0 top-0 h-screen w-16 md:w-64 bg-white shadow flex flex-col justify-between p-4">
       <div>
         <h1 className="text-pink-600 text-2xl font-bold mb-6 hidden md:block">
           InstaClone

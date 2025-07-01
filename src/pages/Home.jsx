@@ -35,12 +35,11 @@ function Home({
 
   return (
     <div className="flex ">
-      <div className="w-full px-10 py-2">
+      <div className="w-full lg:px-10 py-2">
         <InstagramStory />
         <InstagramSuggestionsHeader />
         {posts.map((post) => {
           const hasLiked = post.likes?.includes(user.uid);
-
           return (
             <div
               key={post.id}
@@ -73,7 +72,7 @@ function Home({
               <img
                 src={post?.imageUrl}
                 alt="post"
-                className="w-full object-cover min-h-[75vh]"
+                className="w-full object-cover min-h-[50vh] lg:min-h-[75vh]"
               />
 
               {/* Action icons */}

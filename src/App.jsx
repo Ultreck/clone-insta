@@ -297,7 +297,7 @@ function App() {
             <ThreeColorSpinner />
           </div>
         )}
-        <div className="text w-3/5">
+        <div className="text w-4/5 pr-2 lg:w-3/5">
           <Routes>
             <Route
               path="/"
