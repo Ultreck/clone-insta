@@ -115,7 +115,7 @@ const CreatePostModal = ({
           onOpenAutoFocus={(e) => e.preventDefault()}
           className={`p-0 border-0 sm:max-w-lg ${
             isNext && !!files?.length && "md:max-w-2xl lg:max-w-3xl"
-          } md:max-h-[80vh] bg-white`}
+          } min-h-[80vh] bg-white`}
         >
           <VisuallyHidden>
             <DialogTitle>Profile Settings</DialogTitle>
