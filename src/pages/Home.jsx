@@ -53,7 +53,7 @@ function Home({
                     alt="user"
                     className="w-8 h-8 rounded-full object-cover"
                   />
-                  <div className="flex items-center gap-2 space-x-1">
+                  <div className="flex text-xs items-center gap-2 space-x-1">
                     <span className="font-semibold">{post.userName}</span>
                     {post?.createdAt &&
                       formatDistanceToNow(post.createdAt.toDate(), {
