@@ -79,7 +79,7 @@ export default function PostModal({
                   </div>
                 ))}
               </ScrollArea>
-              <div className="border-t bg-gray-200 border-gray-800 z-20 px-4 py-3 space-y-3">
+              <div className="border-t bg-gray-200 border-gray-800 z-20 px-4 lg:py-3 py-1 space-y-3">
                 {/* Action icons */}
                 <div className="flex  bg-gray-200 justify-between items-center px-4 py-2 text-xl">
                   <div className="flex w-full space-x-4">
@@ -125,7 +125,7 @@ export default function PostModal({
                 <div className="text w-full">
                   <form
                     onSubmit={handleSubmit}
-                    className="flex items-center gap-2 justify-between w-full"
+                    className="flex items-center mb-2 gap-2 justify-between w-full"
                   >
                     <Input
                       value={comment}
