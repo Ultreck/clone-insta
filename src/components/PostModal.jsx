@@ -40,15 +40,15 @@ export default function PostModal({
       <Portal>
         <DialogContent className="p-0 border-0 sm:max-w-lg md:max-w-2xl lg:max-w-5xl min-h-[90vh] bg-gray-200">
           <div className="md:flex w-full h-full md:h-auto border-0">
-            <div className=" bg-white md:w-1/2 md:min-h-[90vh] overflow-hidden">
+            <div className=" bg-white md:w-1/2 min-h-[40vh] md:min-h-[90vh] overflow-hidden">
               <img
                 src={post?.imageUrl}
                 alt="Post"
-                className="w-full object-fill md:object-cover md:min-h-[90vh]"
+                className="w-full object-center md:object-cover max-h-[40vh] md:min-h-[90vh]"
               />
             </div>
 
-            <div className="md:w-1/2 flex flex-col border-l border-gray-300">
+            <div className="md:w-1/2 bg-gray-200 flex flex-col border-l border-gray-300">
               <div className="flex items-center gap-3 p-4 border-b border-gray-700">
                 <Avatar>
                   <AvatarImage src={post?.userPic} />
@@ -63,7 +63,7 @@ export default function PostModal({
                 <button className="text-gray-400 text-sm">•••</button>
               </div>
 
-              <ScrollArea className="flex-1 px-4 py-8 max-h-[400px] space-y-4">
+              <ScrollArea className="flex-1 px-4 py-8 max-h-[180px] overflow-y-auto lg:max-h-[200px] space-y-4">
                 {post?.comments?.map((c, idx) => (
                   <div key={idx} className="text-sm my-3">
                     <span className="font-semibold">{c?.userName}</span>{" "}
@@ -79,9 +79,9 @@ export default function PostModal({
                   </div>
                 ))}
               </ScrollArea>
-              <div className="border-t border-gray-800 px-4 py-3 space-y-3">
+              <div className="border-t bg-gray-200 border-gray-800 z-20 px-4 py-3 space-y-3">
                 {/* Action icons */}
-                <div className="flex justify-between items-center px-4 py-2 text-xl">
+                <div className="flex  bg-gray-200 justify-between items-center px-4 py-2 text-xl">
                   <div className="flex w-full space-x-4">
                     <button
                       className="cursor-pointer"
