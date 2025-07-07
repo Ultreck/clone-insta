@@ -44,6 +44,7 @@ import Notifications from "./pages/Notifications";
 import ThreeColorSpinner from "./components/ThreeColorSpinner";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import SmallerScreenNavbar from "./components/SmallerScreenNavbar";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const appName = import.meta.env.VITE_APP_NAME;
@@ -143,21 +144,21 @@ function App() {
     }
   };
 
-  const handleEditPost = async (postId, updatedData) => {
-    try {
-      const postRef = doc(db, "instagram", postId);
-      await updateDoc(postRef, {
-        caption: updatedData.caption,
-        imageFile: updatedData.imageFile,
-        updatedAt: new Date(),
-      });
-      toast.success("Post updated successfully!");
-      console.log("Post updated");
-    } catch (error) {
-      console.error("Error updating post:", error.message);
-      toast.error("Failed to update post.");
-    }
-  };
+  // const handleEditPost = async (postId, updatedData) => {
+  //   try {
+  //     const postRef = doc(db, "instagram", postId);
+  //     await updateDoc(postRef, {
+  //       caption: updatedData.caption,
+  //       imageFile: updatedData.imageFile,
+  //       updatedAt: new Date(),
+  //     });
+  //     toast.success("Post updated successfully!");
+  //     console.log("Post updated");
+  //   } catch (error) {
+  //     console.error("Error updating post:", error.message);
+  //     toast.error("Failed to update post.");
+  //   }
+  // };
 
   const handleLike = async (postId, hasLiked) => {
     const postRef = doc(db, "instagram", postId);
@@ -276,7 +277,7 @@ function App() {
   return (
     <Router>
       <div className="bg-gray-50 min-h-screen font-sans flex w-full">
-        <div className="text w-1/4">
+        <div className="text hidden md:block w-1/4">
           <Sidebar
             handlePost={handlePost}
             setCaption={setCaption}
@@ -297,7 +298,7 @@ function App() {
             <ThreeColorSpinner />
           </div>
         )}
-        <div className="text w-4/5 pr-2 lg:w-3/5">
+        <div className="text w-full lg:w-3/5">
           <Routes>
             <Route
               path="/"
@@ -316,19 +317,6 @@ function App() {
                 />
               }
             />
-            {/* <Route
-              path="/create"
-              element={
-                <Create
-                  user={user}
-                  caption={caption}
-                  imageUrl={imageUrl}
-                  setCaption={setCaption}
-                  setImageUrl={setImageUrl}
-                  handlePost={handlePost}
-                />
-              }
-            /> */}
             <Route path="/profile" element={<Profile user={user} />} />
             <Route
               path="/notifications"
@@ -336,6 +324,20 @@ function App() {
             />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
+          <SmallerScreenNavbar 
+           handlePost={handlePost}
+            setCaption={setCaption}
+            caption={caption}
+            location={location}
+            setLocation={setLocation}
+            user={user}
+            onLogout={handleSignOut}
+            setImageUrl={setImageUrl}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={setIsSubmitting}
+            open={open}
+            setOpen={setOpen}
+           />
         </div>
         <Toaster position="top-center" richColors />
       </div>

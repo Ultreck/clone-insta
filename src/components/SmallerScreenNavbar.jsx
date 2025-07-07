@@ -1,10 +1,10 @@
-// Sidebar.jsx
-import { FiHome, FiLogOut, FiUser, FiBell, FiPlusSquare } from "react-icons/fi";
-import { Link, useLocation } from "react-router-dom";
-import CreatePostModal from "./CreatePostModal";
+import React from 'react'
+import { FiBell, FiHome, FiLogOut, FiPlusSquare, FiUser } from 'react-icons/fi'
+import { Link, useLocation } from 'react-router-dom'
+import CreatePostModal from './CreatePostModal'
 
-function Sidebar({
-  user,
+const SmallerScreenNavbar = ({
+    user,
   onLogout,
   location,
   setLocation,
@@ -16,18 +16,14 @@ function Sidebar({
   setIsSubmitting,
   open,
   setOpen
-}) {
-  const cLocation = useLocation();
+}) => {
+     const cLocation = useLocation();
   const active = (path) =>
     cLocation.pathname === path ? "text-pink-600" : "text-gray-800";
-
   return (
-    <aside className="fixed left-0 top-0 h-screen md:w-64 bg-white shadow flex flex-col justify-between p-4">
-      <div>
-        <h1 className="text-pink-600 text-2xl font-bold mb-6 hidden md:block">
-          InstaClone
-        </h1>
-        <nav className="space-y-10 mt-16">
+   <aside className="fixed md:hidden left-0 right-0  bottom-0 h-12 border-t border-gray-200 w-full bg-white">
+      <div className='w-full h-full'>
+        <nav className="flex border w-full h-full justify-around items-center">
           <Link
             to="/"
             className={`flex items-center space-x-2 ${active(
@@ -87,7 +83,7 @@ function Sidebar({
         </nav>
       </div>
       <div>
-        {user && (
+        {/* {user && (
           <button
             onClick={onLogout}
             className="flex items-center space-x-2 text-red-600 hover:text-red-800"
@@ -95,10 +91,10 @@ function Sidebar({
             <FiLogOut className="lg:text-2xl text-xl" />{" "}
             <span className="hidden md:inline">Logout</span>
           </button>
-        )}
+        )} */}
       </div>
     </aside>
-  );
+  )
 }
 
-export default Sidebar;
+export default SmallerScreenNavbar

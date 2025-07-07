@@ -34,8 +34,8 @@ function Home({
   };
 
   return (
-    <div className="flex ">
-      <div className="w-full lg:px-10 py-2">
+    <div className=" ">
+      <div className="w-full px-2 lg:px-10 pt-2 pb-10">
         <InstagramStory />
         <InstagramSuggestionsHeader />
         {posts.map((post) => {

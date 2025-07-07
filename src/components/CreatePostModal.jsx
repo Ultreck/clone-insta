@@ -226,7 +226,7 @@ const CreatePostModal = ({
               )}
 
               {isNext && !!files?.length && (
-                <ScrollArea className="md:w-2/5 border max-h-[46vh] md:max-h-[80vh] space-y-4 overflow-y-auto">
+                <ScrollArea className="md:w-2/5 border-0 max-h-[46vh] md:max-h-[80vh] space-y-4 overflow-y-auto">
                   <div className=" flex pb-10 flex-col border-gray-300">
                     <div className="flex items-center gap-3 p-4 md:mt-12">
                       <div className="flex items-center space-x-3">
