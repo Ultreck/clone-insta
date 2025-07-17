@@ -190,7 +190,7 @@ function App() {
     });
   };
   const handleShare = async (postId) => {
-    const postUrl = `${window.location.origin}/instagram/${postId}`; // You can customize this route
+    const postUrl = `${window.location.origin}/instagram/${postId}`;
     try {
       await navigator.clipboard.writeText(postUrl);
       alert("Link copied to clipboard!");
