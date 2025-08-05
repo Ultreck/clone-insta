@@ -88,7 +88,7 @@ const usePost = () => {
       // ✅ Save this correct download URL to Firestore
       await addDoc(collection(db, "instagram"), {
         caption,
-        imageUrl: downloadURL, // MUST match how you render it later
+        imageUrl: downloadURL,
         userName: user.displayName,
         userId: user.uid,
         userPic: user.photoURL,
